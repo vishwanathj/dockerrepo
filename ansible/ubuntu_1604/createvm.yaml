@@ -1,0 +1,35 @@
+---
+- hosts: all
+  sudo: yes
+  gather_facts: False
+  pre_tasks:
+    - name: replace #user = "root" in qemu.conf file with user = "root"
+      lineinfile:
+        dest: /etc/libvirt/qemu.conf
+        regexp: '#user = "root"'
+        line: 'user = "root"'
+        state: present
+      register: userchange
+    - setup: # aka gather_facts
+    - name: replace #group = "root" in qemu.conf file group = "root"
+      lineinfile:
+        dest: /etc/libvirt/qemu.conf
+        regexp: '#group = "root"'
+        line: 'group = "root"'
+        state: present
+      register: groupchange
+    - name: restart libvirtd service
+      service: name=libvirtd state=restarted
+      when: userchange.changed or groupchange.changed
+    - name: Install virtinst
+      raw: test -e /usr/bin/virt-inst || (apt -y update && apt install -y virtinst)
+      register: output
+      changed_when: output.stdout != ""
+    - name: Install virt-manager
+      raw: test -e /usr/bin/virt-manager || (apt -y update && apt install -y virt-manager)
+      register: output
+      changed_when: output.stdout != ""
+    - setup: # aka gather_facts
+  roles:
+    - { role: createvm, tags: "createvm" }
+
