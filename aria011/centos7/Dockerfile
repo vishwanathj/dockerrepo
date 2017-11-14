@@ -1,5 +1,9 @@
 FROM centos:7
 
+#COMMAND TO BUILD THE IMAGE ==> docker build --build-arg ARIA_VER=0.1.1 --build-arg GTAG_VER=0.1.1 -t aria_011:7 .
+ARG ARIA_VER=0.1.1
+ARG GTAG_VER=0.1.1
+
 RUN yum -y update; yum clean all
 
 RUN yum install -y yum-plugin-ovl 
@@ -10,7 +14,7 @@ RUN python get-pip.py
 
 RUN pip install --upgrade pip setuptools
 
-RUN pip install apache-ariatosca[ssh]==0.1.1 --no-binary apache-ariatosca
+RUN pip install apache-ariatosca[ssh]==$ARIA_VER --no-binary apache-ariatosca
 
 WORKDIR /tmp
 
@@ -18,4 +22,4 @@ RUN git clone https://github.com/apache/incubator-ariatosca.git /tmp/incubator-a
 
 WORKDIR /tmp/incubator-ariatosca
 
-RUN git checkout tags/0.1.1
+RUN git checkout tags/$GTAG_VER
