@@ -1,0 +1,14 @@
+version: "3"
+services:
+  jekyll:
+    #image: jekyll:16.04
+    image: jekyll/jekyll
+    hostname: jekyll
+    ports:
+      - "4000:4000"
+    stdin_open: true
+    tty: true
+    command: sh -c "cd /tmp && git clone https://github.com/vishwanathj/incubator-ariatosca-website.git /tmp/incubator-ariatosca-website && cd /tmp/incubator-ariatosca-website && bash"
+    #command: sh -c "bash"
+    #command: sh -c "aria service-templates store examples/hello-world/helloworld.yaml my-service-template && sleep 2 && aria services create my-service -t my-service-template && sleep 2 && aria executions start install -s my-service && bash"
+
